@@ -55,7 +55,7 @@ btn2.addEventListener('click', function(e) {
 });
 
 var btn3 = Ti.UI.createButton({
-	title: "Alarm & Notify Scheduled",
+	title: "Create Alarm '43' & Notify Scheduled",
 	height: 50
 });
 win.add(btn3);
@@ -198,12 +198,12 @@ btn8.addEventListener('click', function(e) {
 
 
 var btn9 = Ti.UI.createButton({
-	title: "Alarm & Notify Cancel",
+	title: "Alarm '43' & Notify Cancel",
 	height: 50
 });
 win.add(btn9);
 btn9.addEventListener('click', function(e) {
-	var requestCode = 41; //RequestCOde to be canceled
+	var requestCode = 43; //RequestCOde to be canceled
 	alarmManager.cancelAlarmNotification(requestCode);
 	var ew = Ti.UI.createAlertDialog({
 		title: 'Info',
@@ -226,5 +226,14 @@ btn10.addEventListener('click', function(e) {
 		buttonNames: [Ti.Android.currentActivity.getString(Ti.Android.R.string.ok)]
 	});
 	ew.show();
+});
+
+var btn11 = Ti.UI.createButton({
+	title: "is Alarm '43' activated?",
+	height: 50
+});
+win.add(btn11);
+btn11.addEventListener('click', function(e) {
+	alert("is activated: " + alarmManager.alarmIsActivated(43));
 });
 win.open();
