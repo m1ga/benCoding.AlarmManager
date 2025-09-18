@@ -183,6 +183,18 @@ This method cancels the alarm linked to the requestCode provided when calling th
 alarmManager.cancelAlarmNotification(41);
 </code></pre>
 
+### alarmIsActivated
+This method checks if there is an active alarm (with an operating pendingIntent) linked to the requestCode provided when calling the alarmIsActivated method. If no parameter is given, the method uses the default requestCode. The method returns a boolean, indicating the existence (or not) of the alarm.
+
+<b>Below parameters:</b>
+* (int)(Optional) Provide an int with the requestCode used when creating the Alarm
+
+<b>Sample:</b>
+<pre><code>
+//Sample
+alarmManager.alarmIsActivated(41);	
+</code></pre>
+
 ### cancelAlarmService
 This method cancels the alarm linked to the requestCode provided when calling the cancelAlarmService method.
 

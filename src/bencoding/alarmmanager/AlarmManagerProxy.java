@@ -281,7 +281,44 @@ public class AlarmManagerProxy extends KrollProxy {
         PendingIntent sender = PendingIntent.getBroadcast(ctx,
                 intentRequestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         am.cancel(sender);
+
+        // Added this due to "alarmIsActivated" method, now it runs as expected
+        sender.cancel();
+
+        utils.infoLog("Alarm Notification with requestCode " + intentRequestCode + " cancelled.");
+
         utils.debugLog("Alarm Notification Canceled");
+    }
+
+    @Kroll.method
+    public boolean alarmIsActivated(@Kroll.argument(optional = true) Object requestCode) {
+        // Set the default request code
+        int intentRequestCode = AlarmmanagerModule.DEFAULT_REQUEST_CODE;
+        // If the optional code was provided, cast accordingly
+        if (requestCode != null) {
+            if (requestCode instanceof Number) {
+                intentRequestCode = ((Number) requestCode).intValue();
+            }
+        }
+
+        // Create a placeholder for the args value
+        HashMap<String, Object> placeholder = new HashMap<String, Object>(0);
+        KrollDict args = new KrollDict(placeholder);
+
+        // Create the Alarm Manager
+        AlarmManager am = (AlarmManager) ctx.getSystemService(TiApplication.ALARM_SERVICE);
+        Intent intent = createAlarmNotifyIntent(args, intentRequestCode);
+        intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+
+        boolean alarmUp = (PendingIntent.getBroadcast(ctx, intentRequestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_NO_CREATE) != null);
+
+        if (alarmUp) {
+            utils.infoLog("Alarm with requestCode " + intentRequestCode + " is activated.");
+            return true;
+        } else {
+            utils.infoLog("Alarm with requestCode " + intentRequestCode + " is not activated.");
+            return false;
+        }
     }
 
     private boolean optionIsEnabled(KrollDict args, String paramName) {
