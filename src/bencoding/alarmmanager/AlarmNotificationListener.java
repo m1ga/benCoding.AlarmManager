@@ -57,7 +57,7 @@ public class AlarmNotificationListener extends BroadcastReceiver {
                 } catch (Exception ignore) {}
             }
         }
-        if (!bundle.containsKey("notification_requestcode") || bundle.getString("notification_requestcode") == null) {
+        if (!bundle.containsKey("notification_requestcode")) {
             utils.debugLog("notification_request_code is null or undefined => assume cancelled");
             return;
         }
