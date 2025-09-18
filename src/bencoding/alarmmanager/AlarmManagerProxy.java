@@ -6,17 +6,19 @@
  */
 package bencoding.alarmmanager;
 
-import java.util.ArrayList;
-import java.util.Calendar;
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
+import android.util.Log;
 
-import ti.modules.titanium.filesystem.FileProxy;
-
-import java.util.GregorianCalendar;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import androidx.core.app.NotificationCompat;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollProxy;
@@ -33,23 +35,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.AlarmManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
-import androidx.core.app.NotificationCompat;
-
-import android.os.Build;
-import android.util.Log;
-
-import bencoding.alarmmanager.AlarmmanagerModule;
+import ti.modules.titanium.filesystem.FileProxy;
 
 @Kroll.proxy(creatableInModule = AlarmmanagerModule.class)
 public class AlarmManagerProxy extends KrollProxy {
@@ -136,7 +129,7 @@ public class AlarmManagerProxy extends KrollProxy {
             importance = args.getInt("importance");
         }
         if (args.containsKeyAndNotNull("when")) {
-            when = 1000 * args.getInt("when") + System.currentTimeMillis();
+            when = 1000L * args.getInt("when") + System.currentTimeMillis();
         }
         if (args.containsKeyAndNotNull("group")) {
             group = args.getString("group");
@@ -285,7 +278,7 @@ public class AlarmManagerProxy extends KrollProxy {
         // Added this due to "alarmIsActivated" method, now it runs as expected
         sender.cancel();
 
-        utils.infoLog("Alarm Notification with requestCode " + intentRequestCode + " cancelled.");
+        utils.debugLog("Alarm Notification with requestCode " + intentRequestCode + " cancelled.");
 
         utils.debugLog("Alarm Notification Canceled");
     }
@@ -313,10 +306,10 @@ public class AlarmManagerProxy extends KrollProxy {
         boolean alarmUp = (PendingIntent.getBroadcast(ctx, intentRequestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_NO_CREATE) != null);
 
         if (alarmUp) {
-            utils.infoLog("Alarm with requestCode " + intentRequestCode + " is activated.");
+            utils.debugLog("Alarm with requestCode " + intentRequestCode + " is activated.");
             return true;
         } else {
-            utils.infoLog("Alarm with requestCode " + intentRequestCode + " is not activated.");
+            utils.debugLog("Alarm with requestCode " + intentRequestCode + " is not activated.");
             return false;
         }
     }
