@@ -303,11 +303,11 @@ public class AlarmManagerProxy extends KrollProxy {
         long freqResults = utils.DAILY_MILLISECONDS;
         Object repeat = args.get("repeat");
         if (repeat instanceof Number) {
-            utils.infoLog("Repeat value provided in milliseconds found");
+            utils.debugLog("Repeat value provided in milliseconds found");
             freqResults = ((Number) repeat).longValue();
         } else {
             String repeatValue = TiConvert.toString(repeat);
-            utils.infoLog("Repeat value of " + repeatValue + " found");
+            utils.debugLog("Repeat value of " + repeatValue + " found");
             if (repeatValue.equalsIgnoreCase("HOURLY")) {
                 freqResults = utils.HOURLY_MILLISECONDS;
             }
@@ -321,7 +321,7 @@ public class AlarmManagerProxy extends KrollProxy {
                 freqResults = utils.YEARLY_MILLISECONDS;
             }
         }
-        utils.infoLog("Repeat Frequency in milliseconds is " + freqResults);
+        utils.debugLog("Repeat Frequency in milliseconds is " + freqResults);
         return freqResults;
     }
 
@@ -363,10 +363,10 @@ public class AlarmManagerProxy extends KrollProxy {
         // Get the requestCode if provided, if none provided
         // we use 192837 for backwards compatibility
         int requestCode = args.optInt("requestCode", AlarmmanagerModule.DEFAULT_REQUEST_CODE);
-        utils.infoLog("addAlarmNotification::requestCode=" + requestCode);
+        utils.debugLog("addAlarmNotification::requestCode=" + requestCode);
         String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-        utils.infoLog("Creating Alarm Notification for: " + sdf.format(calendar.getTime()));
+        utils.debugLog("Creating Alarm Notification for: " + sdf.format(calendar.getTime()));
 
         // Create the Alarm Manager
         AlarmManager am = (AlarmManager) ctx.getSystemService(TiApplication.ALARM_SERVICE);
@@ -383,7 +383,7 @@ public class AlarmManagerProxy extends KrollProxy {
             am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
         }
 
-        utils.infoLog("Alarm Notification Created .....");
+        utils.debugLog("Alarm Notification Created .....");
     }
 
     private Intent createAlarmServiceIntent(KrollDict args) {
@@ -423,7 +423,7 @@ public class AlarmManagerProxy extends KrollProxy {
     @Kroll.method
     public void cancelAlarmService(@Kroll.argument(optional = true) Object requestCode) {
         // To cancel an alarm the signature needs to be the same as the submitting one.
-        utils.infoLog("Cancelling Alarm Service");
+        utils.debugLog("Cancelling Alarm Service");
         int intentRequestCode = AlarmmanagerModule.DEFAULT_REQUEST_CODE;
         if (requestCode != null) {
             if (requestCode instanceof Number) {
@@ -442,7 +442,7 @@ public class AlarmManagerProxy extends KrollProxy {
         PendingIntent sender = PendingIntent.getBroadcast(ctx, intentRequestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         am.cancel(sender);
         sender.cancel();
-        utils.infoLog("Alarm Service Canceled");
+        utils.debugLog("Alarm Service Canceled");
     }
 
     @Kroll.method
@@ -507,7 +507,7 @@ public class AlarmManagerProxy extends KrollProxy {
             utils.debugLog("Setting Alarm for a single run");
             am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
         }
-        utils.infoLog("Alarm Service Request Created");
+        utils.debugLog("Alarm Service Request Created");
     }
 
     @Kroll.method
@@ -527,11 +527,11 @@ public class AlarmManagerProxy extends KrollProxy {
     @Kroll.method
     public void setRootActivityClassName(@Kroll.argument(optional = true) Object className) {
         //
-        utils.infoLog("Request to set rootActivityClassName");
+        utils.debugLog("Request to set rootActivityClassName");
 
         if (className != null) {
             if (className instanceof String) {
-                utils.infoLog("Setting rootActivityClassName to: " + className);
+                utils.debugLog("Setting rootActivityClassName to: " + className);
                 AlarmmanagerModule.rootActivityClassName = (String) className;
             }
         }

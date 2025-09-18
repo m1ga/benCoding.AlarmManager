@@ -39,13 +39,13 @@ public class AlarmServiceListener extends BroadcastReceiver {
         utils.debugLog("Full Service Name: " + fullServiceName);
         if (this.isServiceRunning(context, fullServiceName)) {
             if (forceRestart) {
-                utils.infoLog("Service is already running, we will stop it then restart");
+                utils.debugLog("Service is already running, we will stop it then restart");
                 Intent tempIntent = new Intent();
                 tempIntent.setClassName(TiApplication.getInstance().getApplicationContext(), fullServiceName);
                 context.stopService(tempIntent);
-                utils.infoLog("Service has been stopped");
+                utils.debugLog("Service has been stopped");
             } else {
-                utils.infoLog("Service is already running not need for us to start");
+                utils.debugLog("Service is already running not need for us to start");
                 return;
             }
         }
@@ -65,6 +65,6 @@ public class AlarmServiceListener extends BroadcastReceiver {
         } else {
             context.startService(serviceIntent);
         }
-        utils.infoLog("Alarm Service Started");
+        utils.debugLog("Alarm Service Started");
     }
 }

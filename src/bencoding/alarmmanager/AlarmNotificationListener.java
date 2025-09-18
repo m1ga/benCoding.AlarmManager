@@ -51,10 +51,14 @@ public class AlarmNotificationListener extends BroadcastReceiver {
         utils.debugLog(">>>>>>> In Alarm Notification Listener >>>>>>>>>>>");
         Bundle bundle = intent.getExtras();
         for (String key : bundle.keySet()) {
-            utils.infoLog(key + "=" + bundle.getString(key));
+            if (bundle.containsKey(key) && bundle.get(key) != null) {
+                try {
+                    utils.debugLog(key + "=" + bundle.get(key));
+                } catch (Exception ignore) {}
+            }
         }
         if (!bundle.containsKey("notification_requestcode") || bundle.getString("notification_requestcode") == null) {
-            utils.infoLog("notification_request_code is null or undefined => assume cancelled");
+            utils.debugLog("notification_request_code is null or undefined => assume cancelled");
             return;
         }
         JSONArray actions = null;
@@ -68,10 +72,10 @@ public class AlarmNotificationListener extends BroadcastReceiver {
         Bitmap largeIcon = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             largeIcon = bundle.getParcelable("notification_largeIcon", Bitmap.class);
-            utils.infoLog("largeIcon=" + largeIcon);
+            utils.debugLog("largeIcon=" + largeIcon);
         } else {
             largeIcon = bundle.getParcelable("notification_largeIcon");
-            utils.infoLog("largeIcon=" + largeIcon);
+            utils.debugLog("largeIcon=" + largeIcon);
         }
         int requestCode = bundle.getInt("notification_requestcode", AlarmmanagerModule.DEFAULT_REQUEST_CODE);
         boolean badge = bundle.getBoolean("notification_badge");
@@ -196,7 +200,7 @@ public class AlarmNotificationListener extends BroadcastReceiver {
                 showLights);
 
         notificationManager.notify(requestCode, notificationBuilder.build());
-        utils.infoLog("You should now see a notification");
+        utils.debugLog("You should now see a notification");
 
         if (bundle.getLong("notification_repeat_ms", 0) > 0) {
             createRepeatNotification(bundle);
@@ -224,7 +228,7 @@ public class AlarmNotificationListener extends BroadcastReceiver {
         Calendar now = Calendar.getInstance();
         long repeat_ms = bundle.getLong("notification_repeat_ms", 0);
         if (repeat_ms == 0) {
-            utils.infoLog("repeat_ms is 0, no good!");
+            utils.debugLog("repeat_ms is 0, no good!");
             // Else we can end into an infinite loop below.
             return;
         }
@@ -233,10 +237,10 @@ public class AlarmNotificationListener extends BroadcastReceiver {
         // Add frequence until cal > now
         while (now.getTimeInMillis() > cal.getTimeInMillis()) {
             cal.add(Calendar.SECOND, repeat_s);
-            utils.infoLog("Add second");
+            utils.debugLog("Add second");
         }
 
-        utils.infoLog("Update bundle with new calendar: " + cal.get(Calendar.YEAR) + "-" + cal.get(Calendar.MONTH) + "-"
+        utils.debugLog("Update bundle with new calendar: " + cal.get(Calendar.YEAR) + "-" + cal.get(Calendar.MONTH) + "-"
                 + cal.get(Calendar.DAY_OF_MONTH) + " " + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE)
                 + ":" + cal.get(Calendar.SECOND));
         bundle.putInt("notification_year", cal.get(Calendar.YEAR));
@@ -256,7 +260,7 @@ public class AlarmNotificationListener extends BroadcastReceiver {
         Date date = new Date(ms);
         String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-        utils.infoLog("Creating Alarm Notification repeat for: " + sdf.format(date));
+        utils.debugLog("Creating Alarm Notification repeat for: " + sdf.format(date));
 
         // Create the Alarm Manager
         AlarmManager am = (AlarmManager) ctx.getSystemService(TiApplication.ALARM_SERVICE);
@@ -314,14 +318,14 @@ public class AlarmNotificationListener extends BroadcastReceiver {
     private Intent createIntent(String className) {
         try {
             if (utils.isEmptyString(className)) {
-                utils.infoLog("[AlarmManager] Using application Start Activity");
+                utils.debugLog("[AlarmManager] Using application Start Activity");
                 Intent iStartActivity = ctx.getPackageManager().getLaunchIntentForPackage(ctx.getPackageName());
                 iStartActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 iStartActivity.addCategory(Intent.CATEGORY_LAUNCHER);
                 iStartActivity.setAction(Intent.ACTION_MAIN);
                 return iStartActivity;
             } else {
-                utils.infoLog("[AlarmManager] Trying to get a class for name '" + className + "'");
+                utils.debugLog("[AlarmManager] Trying to get a class for name '" + className + "'");
                 @SuppressWarnings("rawtypes")
                 Class intentClass = Class.forName(className);
                 Intent intentFromClass = new Intent(ctx, intentClass);
