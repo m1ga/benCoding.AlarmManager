@@ -86,6 +86,7 @@ You can create an AlarmNotification using the below properties:
 * <b>badge</b> - (Optional) (boolean) Sets whether notifications posted to this channel can appear as application icon badges in a Launcher.
 * <b>badegeIconType</b> - (Optional) (const) Sets which icon to display as a badge for this notification.
 * <b>when</b> - (Optional) (long) Difference to now in sec. Default is 0
+* <b>useScheduledTime</b> - (Optional) (boolean) If true, sets the notification timestamp to the scheduled alarm time instead of the time when the alarm fires. This is useful for showing users when an alarm was supposed to fire. Default is false.
 * <b>ongoing</b> - (Optional) (boolean) false: user cannot swipe out
 * <b>group</b> - (OPtional) (String) diffent for every notification if you want an extra strip.
 * <b>showWhen</b>  - (Optional) (boolean)
@@ -252,6 +253,16 @@ var ew2 = Ti.UI.createAlertDialog({
 	buttonNames:[Ti.Android.currentActivity.getString(Ti.Android.R.string.ok)]
 });
  ew2.show();
+
+//Below is an example using useScheduledTime to set the notification timestamp to the scheduled time
+//This is useful for showing users when an alarm was supposed to fire
+alarmManager.addAlarmNotification({
+	requestCode:requestCode + 1,
+	minute: 5, //Set the alarm to go off in 5 minutes
+	contentTitle:'Scheduled Alarm', //Set the title of the Notification that will appear
+	contentText:'This notification shows the scheduled time', //Set the body of the notification that will appear
+	useScheduledTime: true //The notification timestamp will show the time the alarm was scheduled for, not when it fires
+});
 
 //Cancel our Notification based Alarms
 alarmManager.cancelAlarmNotification(requestCode);
