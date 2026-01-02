@@ -197,6 +197,27 @@ btn8.addEventListener('click', function(e) {
 });
 
 
+var btn8b = Ti.UI.createButton({
+	title: "Alarm with Scheduled Timestamp",
+	height: 50
+});
+win.add(btn8b);
+btn8b.addEventListener('click', function(e) {
+	alarmManager.addAlarmNotification({
+		requestCode: 45, //Request ID used to identify a specific alarm
+		minute: 1, //Set the number of minutes until the alarm should go off
+		contentTitle: 'Scheduled Time Example', //Set the title of the Notification that will appear
+		contentText: 'This notification shows the scheduled time', //Set the body of the notification that will appear
+		useScheduledTime: true //Set the notification timestamp to the scheduled alarm time
+	});
+	var ew = Ti.UI.createAlertDialog({
+		title: 'Info',
+		message: "Alarm set for 1 minute. The notification will show the scheduled time, not the fire time.",
+		buttonNames: [Ti.Android.currentActivity.getString(Ti.Android.R.string.ok)]
+	});
+	ew.show();
+});
+
 var btn9 = Ti.UI.createButton({
 	title: "Alarm '43' & Notify Cancel",
 	height: 50

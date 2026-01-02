@@ -98,7 +98,7 @@ public class AlarmManagerProxy extends KrollProxy {
         return cal;
     }
 
-    private Intent createAlarmNotifyIntent(KrollDict args, int requestCode) {
+    private Intent createAlarmNotifyIntent(KrollDict args, int requestCode, long scheduledTime) {
         utils.debugLog("createAlarmNotifyIntent::requestCode=" + requestCode);
         int notificationIcon = 0;
         String contentTitle = "";
@@ -128,7 +128,10 @@ public class AlarmManagerProxy extends KrollProxy {
         if (args.containsKeyAndNotNull("importance")) {
             importance = args.getInt("importance");
         }
-        if (args.containsKeyAndNotNull("when")) {
+        if (args.containsKeyAndNotNull("useScheduledTime") && args.getBoolean("useScheduledTime")) {
+            when = scheduledTime;
+            utils.debugLog("Using scheduled time for notification timestamp: " + when);
+        } else if (args.containsKeyAndNotNull("when")) {
             when = 1000L * args.getInt("when") + System.currentTimeMillis();
         }
         if (args.containsKeyAndNotNull("group")) {
@@ -269,7 +272,7 @@ public class AlarmManagerProxy extends KrollProxy {
 
         // Create the Alarm Manager
         AlarmManager am = (AlarmManager) ctx.getSystemService(TiApplication.ALARM_SERVICE);
-        Intent intent = createAlarmNotifyIntent(args, intentRequestCode);
+        Intent intent = createAlarmNotifyIntent(args, intentRequestCode, 0);
         intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
         PendingIntent sender = PendingIntent.getBroadcast(ctx,
                 intentRequestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
@@ -300,7 +303,7 @@ public class AlarmManagerProxy extends KrollProxy {
 
         // Create the Alarm Manager
         AlarmManager am = (AlarmManager) ctx.getSystemService(TiApplication.ALARM_SERVICE);
-        Intent intent = createAlarmNotifyIntent(args, intentRequestCode);
+        Intent intent = createAlarmNotifyIntent(args, intentRequestCode, 0);
         intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
 
         boolean alarmUp = (PendingIntent.getBroadcast(ctx, intentRequestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_NO_CREATE) != null);
@@ -400,7 +403,7 @@ public class AlarmManagerProxy extends KrollProxy {
 
         // Create the Alarm Manager
         AlarmManager am = (AlarmManager) ctx.getSystemService(TiApplication.ALARM_SERVICE);
-        Intent intent = createAlarmNotifyIntent(args, requestCode);
+        Intent intent = createAlarmNotifyIntent(args, requestCode, calendar.getTimeInMillis());
         intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
         PendingIntent sender = PendingIntent.getBroadcast(ctx,
                 requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
