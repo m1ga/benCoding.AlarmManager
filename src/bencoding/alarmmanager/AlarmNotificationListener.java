@@ -6,41 +6,32 @@
  */
 package bencoding.alarmmanager;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.io.File;
-import java.text.SimpleDateFormat;
-
+import android.R;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.AudioAttributes;
+import android.net.Uri;
+import android.os.Bundle;
 
-import org.appcelerator.kroll.KrollDict;
-import org.appcelerator.kroll.KrollProxy;
-import org.appcelerator.kroll.common.Log;
+import androidx.core.app.NotificationCompat;
+
 import org.appcelerator.titanium.TiApplication;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.R;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.NotificationChannel;
-import android.media.AudioAttributes;
-import android.app.PendingIntent;
-import android.net.Uri;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
-
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationCompat.Builder;
-import androidx.core.content.FileProvider;
-import androidx.core.app.NotificationCompat.BigTextStyle;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class AlarmNotificationListener extends BroadcastReceiver {
     public Context ctx = TiApplication.getInstance().getApplicationContext();
@@ -54,7 +45,8 @@ public class AlarmNotificationListener extends BroadcastReceiver {
             if (bundle.containsKey(key) && bundle.get(key) != null) {
                 try {
                     utils.debugLog(key + "=" + bundle.get(key));
-                } catch (Exception ignore) {}
+                } catch (Exception ignore) {
+                }
             }
         }
         if (!bundle.containsKey("notification_requestcode")) {
@@ -64,8 +56,7 @@ public class AlarmNotificationListener extends BroadcastReceiver {
         JSONArray actions = null;
         String actionsString = bundle.getString("notification_actions");
         try {
-            if (actionsString != null)
-                actions = new JSONArray(actionsString);
+            if (actionsString != null) actions = new JSONArray(actionsString);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -119,8 +110,7 @@ public class AlarmNotificationListener extends BroadcastReceiver {
         }
         String channelName = bundle.getString("notification_channel_name", "notification");
 
-        notificationManager = (NotificationManager) TiApplication.getInstance()
-                .getSystemService(TiApplication.NOTIFICATION_SERVICE);
+        notificationManager = (NotificationManager) TiApplication.getInstance().getSystemService(TiApplication.NOTIFICATION_SERVICE);
         Intent notifyIntent = createIntent(className);
         notifyIntent.putExtra("requestCode", requestCode);
         String customData = bundle.getString("customData");
@@ -196,8 +186,7 @@ public class AlarmNotificationListener extends BroadcastReceiver {
             notificationBuilder.setTimeoutAfter(timeoutAfter * 1000);
         }
         utils.debugLog("setting notification flags in package");
-        notificationBuilder = createNotifyFlags(notificationBuilder, playSound, hasCustomSound, soundPath, doVibrate,
-                showLights);
+        notificationBuilder = createNotifyFlags(notificationBuilder, playSound, hasCustomSound, soundPath, doVibrate, showLights);
 
         notificationManager.notify(requestCode, notificationBuilder.build());
         utils.debugLog("You should now see a notification");
@@ -240,9 +229,7 @@ public class AlarmNotificationListener extends BroadcastReceiver {
             utils.debugLog("Add second");
         }
 
-        utils.debugLog("Update bundle with new calendar: " + cal.get(Calendar.YEAR) + "-" + cal.get(Calendar.MONTH) + "-"
-                + cal.get(Calendar.DAY_OF_MONTH) + " " + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE)
-                + ":" + cal.get(Calendar.SECOND));
+        utils.debugLog("Update bundle with new calendar: " + cal.get(Calendar.YEAR) + "-" + cal.get(Calendar.MONTH) + "-" + cal.get(Calendar.DAY_OF_MONTH) + " " + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND));
         bundle.putInt("notification_year", cal.get(Calendar.YEAR));
         bundle.putInt("notification_month", cal.get(Calendar.MONTH));
         bundle.putInt("notification_day", cal.get(Calendar.DAY_OF_MONTH));
@@ -265,14 +252,12 @@ public class AlarmNotificationListener extends BroadcastReceiver {
         // Create the Alarm Manager
         AlarmManager am = (AlarmManager) ctx.getSystemService(TiApplication.ALARM_SERVICE);
         intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-        PendingIntent sender = PendingIntent.getBroadcast(TiApplication.getInstance().getApplicationContext(),
-                requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent sender = PendingIntent.getBroadcast(TiApplication.getInstance().getApplicationContext(), requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         am.setExact(AlarmManager.RTC_WAKEUP, ms, sender);
 
     }
 
-    private NotificationCompat.Builder createNotifyFlags(NotificationCompat.Builder notification, boolean playSound,
-                                                         boolean hasCustomSound, String soundPath, boolean doVibrate, boolean showLights) {
+    private NotificationCompat.Builder createNotifyFlags(NotificationCompat.Builder notification, boolean playSound, boolean hasCustomSound, String soundPath, boolean doVibrate, boolean showLights) {
         if (playSound && !hasCustomSound && doVibrate && showLights) {
             notification.setDefaults(Notification.DEFAULT_ALL);
         } else {
@@ -326,8 +311,7 @@ public class AlarmNotificationListener extends BroadcastReceiver {
                 return iStartActivity;
             } else {
                 utils.debugLog("[AlarmManager] Trying to get a class for name '" + className + "'");
-                @SuppressWarnings("rawtypes")
-                Class intentClass = Class.forName(className);
+                @SuppressWarnings("rawtypes") Class intentClass = Class.forName(className);
                 Intent intentFromClass = new Intent(ctx, intentClass);
                 // Add the flags needed to restart
                 intentFromClass.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);

@@ -6,9 +6,6 @@
  */
 package bencoding.alarmmanager;
 
-import org.appcelerator.titanium.TiApplication;
-import org.json.JSONArray;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.BroadcastReceiver;
@@ -17,14 +14,15 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
+import org.appcelerator.titanium.TiApplication;
+
 public class AlarmServiceListener extends BroadcastReceiver {
 
     private boolean isServiceRunning(Context context, String serviceName) {
 
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
-            if (serviceName.equals(service.service.getClassName()))
-                return true;
+            if (serviceName.equals(service.service.getClassName())) return true;
         return false;
     }
 

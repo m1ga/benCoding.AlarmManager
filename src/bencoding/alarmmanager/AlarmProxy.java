@@ -6,9 +6,9 @@
  */
 package bencoding.alarmmanager;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollProxy;
@@ -16,10 +16,9 @@ import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-
-import android.content.Intent;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 
 
 @Kroll.proxy(creatableInModule = AlarmmanagerModule.class)

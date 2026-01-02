@@ -151,8 +151,7 @@ public class AlarmManagerProxy extends KrollProxy {
         boolean showLights = optionIsEnabled(args, "showLights");
         boolean onlyalertonce = optionIsEnabled(args, "onlyAlertOnce");
         boolean autocancel = optionIsEnabled(args, "autocancel");
-        if (args.containsKeyAndNotNull(TiC.PROPERTY_CONTENT_TITLE)
-                || args.containsKeyAndNotNull(TiC.PROPERTY_CONTENT_TEXT)) {
+        if (args.containsKeyAndNotNull(TiC.PROPERTY_CONTENT_TITLE) || args.containsKeyAndNotNull(TiC.PROPERTY_CONTENT_TEXT)) {
             if (args.containsKeyAndNotNull(TiC.PROPERTY_CONTENT_TITLE)) {
                 contentTitle = TiConvert.toString(args, TiC.PROPERTY_CONTENT_TITLE);
             }
@@ -215,16 +214,12 @@ public class AlarmManagerProxy extends KrollProxy {
         intent.putExtra("notification_badgeIconType", badgeIconType);
         try {
             JSONArray actions = getActions(args.get("actions"));
-            if (actions != null)
-                intent.putExtra("notification_actions", actions.toString());
+            if (actions != null) intent.putExtra("notification_actions", actions.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        // As of API 19 setRepeating == setInexactRepeating, see also:
-        // http://developer.android.com/reference/android/app/AlarmManager.html#setRepeating(int,
-        // long, long, android.app.PendingIntent)
-        if (android.os.Build.VERSION.SDK_INT >= 19 && hasRepeating(args)) {
+        if (hasRepeating(args)) {
             intent.putExtra("notification_repeat_ms", repeatingFrequency(args));
             Calendar cal = getFullCalendar(args);
             intent.putExtra("notification_year", cal.get(Calendar.YEAR));
@@ -246,9 +241,7 @@ public class AlarmManagerProxy extends KrollProxy {
 
     @Kroll.method
     public String findStartActivityName() {
-        return ctx.getPackageManager()
-                .getLaunchIntentForPackage(ctx.getPackageName())
-                .getClass().getName();
+        return ctx.getPackageManager().getLaunchIntentForPackage(ctx.getPackageName()).getClass().getName();
     }
 
     @Kroll.method
@@ -274,8 +267,7 @@ public class AlarmManagerProxy extends KrollProxy {
         AlarmManager am = (AlarmManager) ctx.getSystemService(TiApplication.ALARM_SERVICE);
         Intent intent = createAlarmNotifyIntent(args, intentRequestCode, 0);
         intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-        PendingIntent sender = PendingIntent.getBroadcast(ctx,
-                intentRequestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent sender = PendingIntent.getBroadcast(ctx, intentRequestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         am.cancel(sender);
 
         // Added this due to "alarmIsActivated" method, now it runs as expected
@@ -360,8 +352,7 @@ public class AlarmManagerProxy extends KrollProxy {
 
     @Kroll.method
     public void addAlarmNotification(@SuppressWarnings("rawtypes") HashMap hm) {
-        @SuppressWarnings("unchecked")
-        KrollDict args = new KrollDict(hm);
+        @SuppressWarnings("unchecked") KrollDict args = new KrollDict(hm);
 
         if (!args.containsKeyAndNotNull(TiC.PROPERTY_CONTENT_TITLE)) {
             throw new IllegalArgumentException("The context title field (contentTitle) is required");
@@ -405,8 +396,7 @@ public class AlarmManagerProxy extends KrollProxy {
         AlarmManager am = (AlarmManager) ctx.getSystemService(TiApplication.ALARM_SERVICE);
         Intent intent = createAlarmNotifyIntent(args, requestCode, calendar.getTimeInMillis());
         intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-        PendingIntent sender = PendingIntent.getBroadcast(ctx,
-                requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent sender = PendingIntent.getBroadcast(ctx, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (isRepeating && !intent.hasExtra("notification_repeat_ms")) {
             utils.debugLog("Setting Alarm to repeat");
@@ -446,9 +436,7 @@ public class AlarmManagerProxy extends KrollProxy {
             intent.putExtra("customData", customData);
         }
 
-        utils.debugLog("created alarm service intent for " + serviceName + "(forceRestart: "
-                + (optionIsEnabled(args, "forceRestart") ? "true" : "false") + ", intervalValue: " + intervalValue
-                + ")");
+        utils.debugLog("created alarm service intent for " + serviceName + "(forceRestart: " + (optionIsEnabled(args, "forceRestart") ? "true" : "false") + ", intervalValue: " + intervalValue + ")");
 
         return intent;
     }
@@ -480,8 +468,7 @@ public class AlarmManagerProxy extends KrollProxy {
 
     @Kroll.method
     public void addAlarmService(@SuppressWarnings("rawtypes") HashMap hm) {
-        @SuppressWarnings("unchecked")
-        KrollDict args = new KrollDict(hm);
+        @SuppressWarnings("unchecked") KrollDict args = new KrollDict(hm);
         if (!args.containsKeyAndNotNull("service")) {
             throw new IllegalArgumentException("Service name (service) is required");
         }
@@ -530,13 +517,11 @@ public class AlarmManagerProxy extends KrollProxy {
         if (isRepeating) {
             utils.debugLog("Setting Alarm to repeat at frequency " + repeatingFrequency);
             intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, requestCode, intent,
-                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
             am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), repeatingFrequency, pendingIntent);
         } else {
             intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-            PendingIntent sender = PendingIntent.getBroadcast(ctx, requestCode, intent,
-                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent sender = PendingIntent.getBroadcast(ctx, requestCode, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
             utils.debugLog("Setting Alarm for a single run");
             am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
         }
@@ -545,15 +530,13 @@ public class AlarmManagerProxy extends KrollProxy {
 
     @Kroll.method
     public void cancelNotification(int requestCode) {
-        NotificationManager notificationManager = (NotificationManager) TiApplication.getInstance()
-                .getSystemService(TiApplication.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) TiApplication.getInstance().getSystemService(TiApplication.NOTIFICATION_SERVICE);
         notificationManager.cancel(requestCode);
     }
 
     @Kroll.method
     public void cancelNotifications() {
-        NotificationManager notificationManager = (NotificationManager) TiApplication.getInstance()
-                .getSystemService(TiApplication.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) TiApplication.getInstance().getSystemService(TiApplication.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
     }
 
@@ -591,8 +574,7 @@ public class AlarmManagerProxy extends KrollProxy {
         JSONArray actions = new JSONArray();
         for (int index = 0; index < actionArray.length; index++) {
             JSONObject action = new JSONObject();
-            KrollDict actionParam = new KrollDict(
-                    (Map<? extends String, ? extends Object>) actionArray[index]);
+            KrollDict actionParam = new KrollDict((Map<? extends String, ? extends Object>) actionArray[index]);
             if (actionParam.containsKeyAndNotNull("actionname")) {
                 action.put("actionname", actionParam.getString("actionname"));
             }
@@ -644,13 +626,11 @@ public class AlarmManagerProxy extends KrollProxy {
             }
             if (TiFile.exists()) {
                 File file = TiFile.getNativeFile().getAbsoluteFile();
-                utils.debugLog("absolutePath=" + file.toURI()
-                        + "  fileExists=" + file.exists());
+                utils.debugLog("absolutePath=" + file.toURI() + "  fileExists=" + file.exists());
                 TiFileProxy result = new TiFileProxy(TiFile);
                 utils.debugLog(result.getNativePath());
                 return Bitmap.createScaledBitmap(TiUIHelper.createBitmap(TiFile.getInputStream()), 100, 100, true);
-            } else
-                utils.debugLog("File not exists");
+            } else utils.debugLog("File not exists");
         } catch (Exception e) {
             utils.debugLog(e.getMessage());
         }

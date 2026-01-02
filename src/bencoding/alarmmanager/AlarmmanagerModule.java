@@ -6,15 +6,15 @@
  */
 package bencoding.alarmmanager;
 
-import org.appcelerator.kroll.KrollModule;
-import org.appcelerator.kroll.annotations.Kroll;
-import org.appcelerator.kroll.common.Log;
-import org.appcelerator.titanium.TiApplication;
-
 import android.app.Activity;
 import android.app.NotificationManager;
 
 import androidx.core.app.NotificationCompat;
+
+import org.appcelerator.kroll.KrollModule;
+import org.appcelerator.kroll.annotations.Kroll;
+import org.appcelerator.kroll.common.Log;
+import org.appcelerator.titanium.TiApplication;
 
 @Kroll.module(name = "Alarmmanager", id = "bencoding.alarmmanager")
 public class AlarmmanagerModule extends KrollModule {
@@ -72,8 +72,7 @@ public class AlarmmanagerModule extends KrollModule {
 
     @Override
     public void onStart(Activity activity) {
-        rootActivityClassName = TiApplication.getInstance().getApplicationContext().getPackageName() + "."
-                + TiApplication.getAppRootOrCurrentActivity().getClass().getSimpleName();
+        rootActivityClassName = TiApplication.getInstance().getApplicationContext().getPackageName() + "." + TiApplication.getAppRootOrCurrentActivity().getClass().getSimpleName();
         Log.d("bencoding.Alarmmanager", "==================\nonStart rootActivityClassName = " + rootActivityClassName);
         super.onStart(activity);
     }
